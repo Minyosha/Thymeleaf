@@ -2,12 +2,13 @@ package gb.Thymeleaf.controller;
 
 import gb.Thymeleaf.model.Product;
 import gb.Thymeleaf.service.ProductService;
+import io.micrometer.core.instrument.Counter;
+import io.micrometer.core.instrument.Metrics;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 
@@ -16,10 +17,11 @@ import java.util.List;
 public class ProductController {
 
     private final ProductService productService;
+    private final Counter productsAdded = Metrics.counter("products_added");
+
 
     @GetMapping("/products")
-    public String viewProducts(Model model)
-    {
+    public String viewProducts(Model model) {
         List<Product> products = productService.findAll();
         model.addAttribute("products",products);
         return "products";
@@ -50,6 +52,7 @@ public class ProductController {
         productService.addProduct(p);
         List<Product> products = productService.findAll();
         model.addAttribute("products", products);
+        productsAdded.increment();
         return "products";
     }
 
