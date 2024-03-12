@@ -1,4 +1,4 @@
-package gb.Thymeleaf.service;
+package gb.Thymeleaf.services;
 
 import gb.Thymeleaf.model.Product;
 import org.springframework.stereotype.Service;

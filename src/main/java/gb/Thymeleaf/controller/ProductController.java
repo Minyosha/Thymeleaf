@@ -1,7 +1,8 @@
 package gb.Thymeleaf.controller;
 
 import gb.Thymeleaf.model.Product;
-import gb.Thymeleaf.service.ProductService;
+import gb.Thymeleaf.services.FileGateWay;
+import gb.Thymeleaf.services.ProductService;
 import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.Metrics;
 import lombok.AllArgsConstructor;
@@ -10,6 +11,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Controller
@@ -18,6 +20,8 @@ public class ProductController {
 
     private final ProductService productService;
     private final Counter productsAdded = Metrics.counter("products_added");
+
+    private FileGateWay fileGateWay;
 
 
     @GetMapping("/products")
@@ -53,6 +57,8 @@ public class ProductController {
         List<Product> products = productService.findAll();
         model.addAttribute("products", products);
         productsAdded.increment();
+        fileGateWay.writeToFile("products.txt", p.toString());
+//        fileGateWay.writeToFile(p.getName() + " " + LocalDateTime.now() + ".txt", p.toString());
         return "products";
     }
 
